@@ -5,10 +5,10 @@
 echo "Setting up Mindful repositories..."
 
 # Define repository URLs (update these with your actual repository URLs)
-CRM_BACKEND_REPO="git@github.com:yourusername/mindful-crm-backend.git"
-CRM_FRONTEND_REPO="git@github.com:yourusername/mindful-crm-frontend.git"
-PRODUCT_BACKEND_REPO="git@github.com:yourusername/mindful-product-backend.git"
-PRODUCT_FRONTEND_REPO="git@github.com:yourusername/mindful-product-frontend.git"
+CRM_BACKEND_REPO="git@github.com:rlrahulpm/mindful-crm-backend.git"
+CRM_FRONTEND_REPO="git@github.com:rlrahulpm/mindful-crm-frontend.git"
+PRODUCT_BACKEND_REPO="git@github.com:rlrahulpm/mindful-product-backend.git"
+PRODUCT_FRONTEND_REPO="git@github.com:rlrahulpm/mindful-product-frontend.git"
 
 # Clone repositories if they don't exist
 if [ ! -d "../mindful-crm-backend" ]; then
