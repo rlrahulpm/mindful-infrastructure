@@ -8,6 +8,9 @@ services:
       DDL_AUTO: validate
       SHOW_SQL: false
       LOG_LEVEL: WARN
+      SECURITY_LOG_LEVEL: WARN
+      SQL_LOG_LEVEL: WARN
+      WEB_LOG_LEVEL: WARN
     restart: always
     
   frontend:
@@ -20,9 +23,19 @@ services:
     environment:
       - NODE_ENV=production
       
+  backend-crm:
+    environment:
+      DDL_AUTO: validate
+      SHOW_SQL: false
+      LOG_LEVEL: WARN
+      SECURITY_LOG_LEVEL: WARN
+      SQL_LOG_LEVEL: WARN
+      WEB_LOG_LEVEL: WARN
+    restart: always
+
   mysql:
     restart: always
-    
+
   # Remove phpMyAdmin in production
   phpmyadmin:
     deploy:

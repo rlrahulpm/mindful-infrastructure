@@ -1,65 +1,74 @@
 # Mindful Infrastructure
 
-Central infrastructure and orchestration repository for the Mindful application ecosystem.
+Production-ready Docker configuration for the Mindful application stack.
 
-## Repository Structure
+## 🚀 Architecture
 
-This repository manages the infrastructure for:
-- **mindful-crm-backend**: CRM backend service (port 8081)
-- **mindful-crm-frontend**: CRM web interface (port 3001)
-- **mindful-product-backend**: Product management backend (port 8080)
-- **mindful-product-frontend**: Product management web interface (port 3000)
+This repository provides fully containerized infrastructure for:
+- **MySQL Database**: Persistent data storage with automatic schema setup
+- **Product Backend**: Spring Boot API (port 8080)
+- **CRM Backend**: Spring Boot CRM API (port 8081)
+- **Product Frontend**: React web app (port 3000)
+- **CRM Frontend**: React CRM interface (port 3001)
+- **phpMyAdmin**: Database management interface (port 8082, dev only)
 
-## Prerequisites
+## ✅ Production-Ready Features
+
+- ✅ **Fully Containerized**: No external dependencies required
+- ✅ **Automatic Schema Setup**: Database tables created automatically
+- ✅ **Health Checks**: Built-in health monitoring for all services
+- ✅ **Security**: Environment variable templates and .gitignore protection
+- ✅ **Production Config**: Separate production overrides
+- ✅ **Schema Management**: Export/import scripts included
+
+## 📋 Prerequisites
 
 - Docker & Docker Compose
 - Git
-- MySQL (for local development without Docker)
-- Node.js 18+ (for frontend development)
-- Java 17+ & Maven (for backend development)
 
-## Quick Start
+## 🚀 Quick Start
 
-### 1. Clone All Repositories
+### 1. Clone and Configure
 
 ```bash
-# Clone infrastructure repository
-git clone https://github.com/yourusername/mindful-infrastructure.git
+# Clone repository
+git clone <your-repo-url>
 cd mindful-infrastructure
 
-# Run the setup script to clone all service repositories
-./setup-repos.sh
-```
-
-### 2. Set Up Environment Variables
-
-```bash
-# Copy example environment file
+# Copy and configure environment
 cp .env.example .env
-
-# Edit .env with your configuration
-nano .env
+# Edit .env with your production values
 ```
 
-### 3. Start All Services
+### 2. Generate Secure Credentials
 
 ```bash
-# Start all services with Docker Compose
+# Generate JWT secret
+openssl rand -base64 32
+
+# Generate strong database passwords
+openssl rand -base64 24
+```
+
+### 3. Start the Stack
+
+```bash
+# Development
 docker-compose up -d
 
-# Or use the Makefile
-make up
+# Production
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
 
 ### 4. Access Applications
 
 - **Product Management**: http://localhost:3000
 - **CRM Interface**: http://localhost:3001
-- **Product API**: http://localhost:8080
-- **CRM API**: http://localhost:8081
-- **phpMyAdmin**: http://localhost:8082
+- **Product API**: http://localhost:8080/api
+- **CRM API**: http://localhost:8081/api
+- **phpMyAdmin**: http://localhost:8082 (dev only)
 
-## Service Ports
+## 📦 Service Ports
 
 | Service | Port | Description |
 |---------|------|-------------|
@@ -70,85 +79,119 @@ make up
 | CRM Frontend | 3001 | CRM UI |
 | phpMyAdmin | 8082 | Database Management |
 
-## Development
+## 🛠️ Schema Management
 
-### Running Services Individually
+The database schema is automatically created from `mysql-init.sql` which includes:
+- User creation and permissions
+- Complete database schema with all tables
+- Stored procedures and indexes
 
+### Export Current Schema
 ```bash
-# Backend services
-cd ../mindful-product-backend && mvn spring-boot:run
-cd ../mindful-crm-backend && mvn spring-boot:run
-
-# Frontend services
-cd ../mindful-product-frontend && npm start
-cd ../mindful-crm-frontend && npm start
+./scripts/export-schema.sh
 ```
 
-### Database Management
-
+### Database Access
 ```bash
-# Access MySQL CLI
-docker exec -it mindful-mysql mysql -u mindful -p
+# MySQL CLI
+docker-compose exec mysql mysql -u mindful -p productdb
 
-# Run migrations
-docker exec mindful-backend ./mvnw flyway:migrate
+# phpMyAdmin (development)
+open http://localhost:8082
 ```
 
-## Deployment
+## 🔒 Security & Production
 
-### Production Deployment
+### Production Checklist
+- [ ] Change all default passwords in `.env`
+- [ ] Generate new JWT secret key
+- [ ] Use `validate` for `DDL_AUTO` in production
+- [ ] Set logging levels to `WARN` or `ERROR`
+- [ ] Review and update security configurations
 
+### Critical Environment Variables
+**Required for Production:**
+- `MYSQL_ROOT_PASSWORD` - Strong root password
+- `DATABASE_PASSWORD` - Strong mindful user password
+- `CRM_DATABASE_PASSWORD` - Strong CRM database password
+- `JWT_SECRET` - Secure JWT signing key (generate with `openssl rand -base64 32`)
+
+## 📊 Health Checks & Monitoring
+
+All services include built-in health checks:
+- **MySQL**: `mysqladmin ping`
+- **Backend Services**: `/actuator/health` endpoints
+- **Frontend Services**: HTTP status checks
+
+### Monitoring Commands
 ```bash
-# Use production compose file
-docker-compose -f docker-compose.prod.yml up -d
-```
+# View all service logs
+docker-compose logs -f
 
-### Environment Variables
+# Specific service logs
+docker-compose logs -f backend
+docker-compose logs -f mysql
 
-Key environment variables:
-- `DATABASE_URL`: MySQL connection string
-- `DATABASE_USERNAME`: Database user
-- `DATABASE_PASSWORD`: Database password
-- `JWT_SECRET`: Secret key for JWT tokens
-- `SERVER_PORT`: Application port
-
-## Monitoring
-
-```bash
-# View logs
-docker-compose logs -f [service-name]
-
-# Check service health
+# Service status
 docker-compose ps
 
-# Monitor resource usage
+# Resource usage
 docker stats
 ```
 
-## Troubleshooting
+## 🛠️ Troubleshooting
 
-### Services not starting
+**Database connection issues:**
+- Check if MySQL container is running: `docker-compose ps`
+- Verify credentials in `.env`
+- Check logs: `docker-compose logs mysql`
+
+**Port conflicts:**
+- Ensure ports 3000, 3001, 8080, 8081, 3306, 8082 are available
+- Modify port mappings in docker-compose.yml if needed
+
+**Service startup issues:**
 ```bash
-# Check logs
-docker-compose logs backend-crm
-
 # Rebuild services
 docker-compose build --no-cache
 docker-compose up -d
+
+# Check specific service logs
+docker-compose logs backend-crm
 ```
 
-### Database connection issues
+## 📋 Maintenance
+
+**Database Backup:**
 ```bash
-# Verify MySQL is running
-docker-compose ps mysql
-
-# Check network connectivity
-docker network inspect mindful-infrastructure_mindful-network
+docker-compose exec mysql mysqldump -u root -p productdb > backup.sql
 ```
 
-## Repository Links
+**Database Restore:**
+```bash
+docker-compose exec -i mysql mysql -u root -p productdb < backup.sql
+```
 
-- [CRM Backend](https://github.com/yourusername/mindful-crm-backend)
-- [CRM Frontend](https://github.com/yourusername/mindful-crm-frontend)
-- [Product Backend](https://github.com/yourusername/mindful-product-backend)
-- [Product Frontend](https://github.com/yourusername/mindful-product-frontend)
+**Update Schema:**
+```bash
+# Export current schema
+./scripts/export-schema.sh
+
+# Update mysql-init.sql with new schema
+# Restart with new schema
+docker-compose down && docker-compose up -d
+```
+
+## 🗂️ File Structure
+
+```
+mindful-infrastructure/
+├── docker-compose.yml          # Main Docker configuration
+├── docker-compose.prod.yml     # Production overrides
+├── mysql-init.sql              # Database initialization + schema
+├── .env                        # Environment variables (not committed)
+├── .env.example               # Environment template
+├── scripts/
+│   └── export-schema.sh       # Schema export script
+└── README.md                  # This file
+```
