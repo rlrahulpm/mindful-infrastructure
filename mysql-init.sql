@@ -737,10 +737,17 @@ INSERT INTO `modules` (`id`, `name`, `description`, `icon`, `is_active`, `displa
 -- Reset AUTO_INCREMENT to continue from ID 10 for future modules
 ALTER TABLE `modules` AUTO_INCREMENT = 10;
 
--- Insert default global superadmin user
+-- Insert default organization
+INSERT INTO `organizations` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
+(1, 'Mindful Technologies', 'Default organization for Mindful product management platform', NOW(), NOW());
+
+-- Reset AUTO_INCREMENT for organizations table
+ALTER TABLE `organizations` AUTO_INCREMENT = 2;
+
+-- Insert default global superadmin user with organization
 -- Note: Password 'Mittu@2020' is hashed using BCrypt (strength 12)
-INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `is_global_superadmin`, `is_superadmin`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'rlrahul2030@gmail.com', '$2a$12$QeT3rXxqNJ4vK9JqWr8pq.UVoqFQW8FGxfhZDzKrSJpfYjh9k7mOG', 'Rahul', 'RL', 1, 1, 1, NOW(), NOW());
+INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `is_global_superadmin`, `is_superadmin`, `is_active`, `organization_id`, `created_at`, `updated_at`) VALUES
+(1, 'rlrahul2030@gmail.com', '$2a$12$QeT3rXxqNJ4vK9JqWr8pq.UVoqFQW8FGxfhZDzKrSJpfYjh9k7mOG', 'Rahul', 'RL', 1, 1, 1, 1, NOW(), NOW());
 
 -- Reset AUTO_INCREMENT for users table
 ALTER TABLE `users` AUTO_INCREMENT = 2;
