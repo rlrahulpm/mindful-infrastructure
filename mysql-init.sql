@@ -721,3 +721,18 @@ DELIMITER ;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2025-09-17 21:01:40
+
+-- Insert default product management modules
+INSERT INTO `modules` (`id`, `name`, `description`, `icon`, `is_active`, `display_order`, `created_at`, `updated_at`) VALUES
+(1, 'Product Basics', 'Define product vision, goals, and target personas', 'lightbulb', 1, 1, NOW(), NOW()),
+(2, 'Market & Competition', 'Analyze market size, competition, and positioning', 'trending-up', 1, 2, NOW(), NOW()),
+(3, 'Product Hypothesis', 'Document hypothesis, solution approach, and success metrics', 'target', 1, 3, NOW(), NOW()),
+(4, 'Roadmap Planning', 'Plan and visualize quarterly product roadmaps', 'map', 1, 4, NOW(), NOW()),
+(5, 'User Stories & Backlog', 'Manage user stories and product backlog', 'list', 1, 5, NOW(), NOW()),
+(6, 'Capacity Planning', 'Plan team capacity and effort allocation', 'calendar', 1, 6, NOW(), NOW()),
+(7, 'Assumptions & Risks', 'Track product assumptions and associated risks', 'alert-triangle', 1, 7, NOW(), NOW()),
+(8, 'Initiatives & Themes', 'Organize work into strategic initiatives and themes', 'folder', 1, 8, NOW(), NOW()),
+(9, 'Kanban Board', 'Visual task management and workflow tracking', 'trello', 1, 9, NOW(), NOW());
+
+-- Reset AUTO_INCREMENT to continue from ID 10 for future modules
+ALTER TABLE `modules` AUTO_INCREMENT = 10;
