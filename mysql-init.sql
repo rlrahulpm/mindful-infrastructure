@@ -744,10 +744,21 @@ INSERT INTO `organizations` (`id`, `name`, `description`, `created_at`, `updated
 -- Reset AUTO_INCREMENT for organizations table
 ALTER TABLE `organizations` AUTO_INCREMENT = 2;
 
--- Insert default global superadmin user with organization
--- Note: Password 'Mittu@2020' is hashed using BCrypt (strength 12)
-INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `is_global_superadmin`, `is_superadmin`, `is_active`, `organization_id`, `created_at`, `updated_at`) VALUES
-(1, 'rlrahul2030@gmail.com', '$2a$12$QeT3rXxqNJ4vK9JqWr8pq.UVoqFQW8FGxfhZDzKrSJpfYjh9k7mOG', 'Rahul', 'RL', 1, 1, 1, 1, NOW(), NOW());
+-- Insert default roles
+INSERT INTO `roles` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
+(1, 'SUPER_ADMIN', 'Global Super Administrator with full system access', NOW(), NOW()),
+(2, 'Organization Admin', 'Full access within assigned organization', NOW(), NOW()),
+(3, 'Product Manager', 'Product management and roadmap access', NOW(), NOW()),
+(4, 'Team Lead', 'Team and project management access', NOW(), NOW()),
+(5, 'Team Member', 'Basic product management access', NOW(), NOW());
+
+-- Reset AUTO_INCREMENT for roles table
+ALTER TABLE `roles` AUTO_INCREMENT = 6;
+
+-- Insert default global superadmin user with organization and role
+-- Note: Password 'Mittu@2020' with correct BCrypt hash from working local database
+INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `is_global_superadmin`, `is_superadmin`, `is_active`, `organization_id`, `role_id`, `created_at`, `updated_at`) VALUES
+(1, 'rlrahul2030@gmail.com', '$2a$10$gsdaPuRa5GFWWINu7Khe6umLJiZagFk/AZR2l3d.1xPq7Gwxbol9y', 'Rahul', 'RL', b'1', 1, 1, 1, 1, NOW(), NOW());
 
 -- Reset AUTO_INCREMENT for users table
 ALTER TABLE `users` AUTO_INCREMENT = 2;
