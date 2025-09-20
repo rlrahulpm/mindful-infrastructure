@@ -731,10 +731,11 @@ INSERT INTO `modules` (`id`, `name`, `description`, `icon`, `is_active`, `displa
 (7, 'Roadmap Planner', 'Plan and manage quarterly product roadmaps with backlog items', 'calendar', 1, 5, NOW(), NOW()),
 (8, 'Capacity Planning', 'Plan and manage team capacity allocation for quarterly roadmap epics', 'people', 1, 6, NOW(), NOW()),
 (9, 'Roadmap', 'Visualize roadmap items across quarters in timeline and Gantt chart views', 'timeline', 1, 7, NOW(), NOW()),
-(10, 'Kanban Board', 'Track and manage work items from Committed to Done', 'view_kanban', 1, 8, NOW(), NOW());
+(10, 'Kanban Board', 'Track and manage work items from Committed to Done', 'view_kanban', 1, 8, NOW(), NOW()),
+(11, 'Resource Planning', 'Manage teams, members, and allocate resources to user stories within epics', 'group', 1, 9, NOW(), NOW());
 
--- Reset AUTO_INCREMENT to continue from ID 11 for future modules
-ALTER TABLE `modules` AUTO_INCREMENT = 11;
+-- Reset AUTO_INCREMENT to continue from ID 12 for future modules
+ALTER TABLE `modules` AUTO_INCREMENT = 12;
 
 -- Insert default organization
 INSERT INTO `organizations` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
@@ -761,3 +762,54 @@ INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `is_g
 
 -- Reset AUTO_INCREMENT for users table
 ALTER TABLE `users` AUTO_INCREMENT = 2;
+
+-- Table structure for table `teams` - Using existing structure
+DROP TABLE IF EXISTS `teams`;
+CREATE TABLE `teams` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `description` text,
+  `product_id` bigint NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_product_id` (`product_id`),
+  CONSTRAINT `teams_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for table `team_members`
+DROP TABLE IF EXISTS `team_members`;
+CREATE TABLE `team_members` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `team_id` bigint NOT NULL,
+  `member_name` varchar(255) NOT NULL,
+  `role` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_team_id` (`team_id`),
+  CONSTRAINT `team_members_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for table `resource_assignments`
+DROP TABLE IF EXISTS `resource_assignments`;
+CREATE TABLE `resource_assignments` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_story_id` bigint NOT NULL,
+  `member_id` bigint NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `product_id` bigint NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_user_story_id` (`user_story_id`),
+  KEY `idx_member_id` (`member_id`),
+  KEY `idx_product_id` (`product_id`),
+  KEY `idx_member_dates` (`member_id`, `start_date`, `end_date`),
+  CONSTRAINT `resource_assignments_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `team_members` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `resource_assignments_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `resource_assignments_ibfk_3` FOREIGN KEY (`user_story_id`) REFERENCES `user_stories` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
