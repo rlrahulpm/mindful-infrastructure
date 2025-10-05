@@ -183,10 +183,6 @@ DROP TABLE IF EXISTS `initiatives`;
 CREATE TABLE `initiatives` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `created_at` datetime(6) NOT NULL,
-  `description` text,
-  `owner` varchar(255) DEFAULT NULL,
-  `priority` varchar(50) NOT NULL,
-  `timeline` varchar(255) DEFAULT NULL,
   `title` varchar(255) NOT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   `product_id` bigint NOT NULL,
@@ -518,26 +514,10 @@ CREATE TABLE `roles` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `teams`
+-- Table structure for table `teams` - MOVED TO END OF FILE (after default data inserts)
+-- Teams are now quarterly-scoped to capacity plans
+-- See line ~768 for the CREATE TABLE statement
 --
-
-DROP TABLE IF EXISTS `teams`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `teams` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `description` text,
-  `product_id` bigint NOT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_teams_product_name` (`product_id`,`name`),
-  KEY `idx_teams_product_id` (`product_id`),
-  CONSTRAINT `teams_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `themes`
@@ -550,7 +530,6 @@ CREATE TABLE `themes` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `color` varchar(7) NOT NULL,
   `created_at` datetime(6) NOT NULL,
-  `description` text,
   `name` varchar(255) NOT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   `product_id` bigint NOT NULL,
@@ -763,19 +742,20 @@ INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `is_g
 -- Reset AUTO_INCREMENT for users table
 ALTER TABLE `users` AUTO_INCREMENT = 2;
 
--- Table structure for table `teams` - Using existing structure
+-- Table structure for table `teams` - Quarterly scoped to capacity plans
 DROP TABLE IF EXISTS `teams`;
 CREATE TABLE `teams` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `description` text,
-  `product_id` bigint NOT NULL,
+  `capacity_plan_id` bigint NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_product_id` (`product_id`),
-  CONSTRAINT `teams_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
+  UNIQUE KEY `uk_teams_capacity_plan_name` (`capacity_plan_id`, `name`),
+  KEY `idx_capacity_plan_id` (`capacity_plan_id`),
+  CONSTRAINT `teams_ibfk_1` FOREIGN KEY (`capacity_plan_id`) REFERENCES `capacity_plans` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table structure for table `team_members`
